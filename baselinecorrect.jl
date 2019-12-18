@@ -11,6 +11,7 @@ end
 
 # get rid of first 250 ps and return array of remaining spectra
 function droptimes()
+	println("getting input file")
 	arr = readdlm("all_procesd_spectra_.csv", ',')
 	smallarr = hcat(arr[:, 1], arr[:, 42:end])
 	return smallarr
@@ -19,11 +20,12 @@ end
 
 # stitch all times back together
 function stitch(corrected)
+	println("compiling output")
 	original = readdlm("all_procesd_spectra_.csv", ',')
-	earlytimes = original[2:end, 41]
-	delays = original[1, : ]
-	arrout = hcat(original[2:end, 41], corrected)
-	arrout = vcat(original[1, : ], arrout)
+	arrout = hcat(original[2:end, 1:41], corrected)
+	arrout = vcat(transpose(original[1, :]), arrout)
+	return arrout
+end
 
 
 
@@ -75,6 +77,7 @@ end
 # generate array of baseline subtractions for left detector
 function genbasesubsl(arrin, polys)
 	indexl = arrin[2:129, 1]
+	println("generating baseline subtractions (left)")
 	subs = [polyval(polys[1], j) for j in indexl]
 	for i in 2:length(polys)
 		temp = [polyval(polys[i], j) for j in indexl]
@@ -87,6 +90,7 @@ end
 # generate array of baseline subtractions for right detector
 function genbasesubsr(arrin, polys)
 	indexr = arrin[130:end, 1]
+	println("generating baseline subtractions (right)")
 	subs = [polyval(polys[1], j) for j in indexr]
 	for i in 2:length(polys)
 		temp = [polyval(polys[i], j) for j in indexr]
@@ -99,6 +103,7 @@ end
 # get array of left detector polynomials
 function polynomialsl(yvalues)
 	fitpointsl = [11, 34, 56, 77, 103, 117]
+	println("fitting polynomials (left)")
 	polys = [polyfit(fitpointsl, yvalues[:, i]) for i in 1:length(yvalues[1, : ])]
 	return polys
 end
@@ -106,7 +111,8 @@ end
 
 # get array of right detector polynomials
 function polynomialsr(yvalues)
-	fitpointsr = [144, 158, 177, 205, 221, 240] 
+	fitpointsr = [144, 158, 177, 205, 221, 240]
+	println("fitting polynomials (right)")
 	polys = [polyfit(fitpointsr, yvalues[:, i]) for i in 1:length(yvalues[1, : ])]
 	return polys
 end
@@ -114,17 +120,19 @@ end
 # get array of corrected baseline corrected spectra
 function subtractbase(arrin, subs)
 	spectra = arrin[2:end, 2:end]
+	println("subtracting baselines")
 	corrected = spectra .- subs
 	return corrected
 end
 
 # code below here
-const arrin = droptimes()
-const fitpointsl = [11, 34, 56, 77, 103, 117]
-const fitpointsr = [144, 158, 177, 205, 221, 240]
+arrin = droptimes()
 subs = vcat(genbasesubsl(arrin, polynomialsl(ysforpolyfitl(arrin))), genbasesubsr(arrin, polynomialsr(ysforpolyfitr(arrin))))
-
 corrected = subtractbase(arrin, subs)
+
+outarr = stitch(corrected)
+
+#=
 println(size(corrected))
 outarr = arrin[2:end, 1]
 println(size(outarr))
@@ -132,5 +140,7 @@ outarr = hcat(outarr, corrected)
 println(size(outarr))
 outarr = vcat(transpose(arrin[1, : ]), outarr)
 println(size(outarr))
+=#
 
 writedlm("testset.csv", outarr, ',')
+println("complete")
