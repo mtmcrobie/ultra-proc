@@ -3,11 +3,23 @@ using DelimitedFiles, Polynomials
 
 # function definitions
 
-# get input from user
-function userinput(msg)
-	println(msg)
-	chomp(readline())
+# get user input for left baseline points
+function get_baseline_points_l()
+	println("Enter desired points for left baseline correction, separated by spaces:")
+	string = readline()
+	splitstring = split(string, " ")
+	return [parse(Int, i) for i in splitstring]
 end
+
+
+# get user input for right baseline points
+function get_baseline_points_r()
+	println("Enter desired points for right baseline correction, separated by spaces:")
+	string = readline()
+	splitstring = split(string, " ")
+	return [parse(Int, i) for i in splitstring]
+end
+
 
 # get rid of first 250 ps and return array of remaining spectra
 function droptimes()
@@ -112,8 +124,8 @@ function subtractbase(arrin, subs)
 end
 
 # code below here
-const fitpointsl = [11, 34, 56, 77, 103, 117]
-const fitpointsr = [144, 158, 177, 205, 221, 240]
+const fitpointsl = get_baseline_points_l()
+const fitpointsr = get_baseline_points_r()
 
 const arrin = droptimes()
 const subs = vcat(genbasesubsl(arrin, polynomialsl(ysforpolyfitl(arrin))), genbasesubsr(arrin, polynomialsr(ysforpolyfitr(arrin))))
@@ -123,3 +135,4 @@ const outarr = stitch(corrected)
 
 writedlm("testset.csv", outarr, ',')
 println("complete")
+exit()
