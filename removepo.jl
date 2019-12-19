@@ -11,7 +11,7 @@ export remove_overlap
 # get user input with a custom msg
 function get_files()
     println("Getting files...")
-    org, conv = readdlm("testset.csv", ','), readdlm("conversion.csv", ',')
+    org, conv = readdlm("baseline_corrected.csv", ','), readdlm("conversion.csv", ',')
     return org, conv
 end
 

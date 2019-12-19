@@ -141,6 +141,6 @@ const corrected = subtractbase(arrin, subs)
 
 const outarr = stitch(corrected)
 
-writedlm("testset.csv", outarr, ',')
+writedlm("baseline_corrected.csv", outarr, ',')
 println("complete")
 exit()
