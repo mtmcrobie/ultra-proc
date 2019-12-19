@@ -45,11 +45,4 @@ module Tmp
         png(porplot, "porplot")
     end
 
-        
-
-
-
-
-
-
 end
