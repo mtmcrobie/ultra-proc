@@ -21,6 +21,13 @@ function get_baseline_points_r()
 end
 
 
+# get order of polynomial for fitting
+function get_polynomial_order()
+	println("Enter polynomial order:")
+	return parse(Int, readline())
+end
+
+
 # get rid of first 250 ps and return array of remaining spectra
 function droptimes()
 	println("getting input file")
@@ -103,7 +110,7 @@ end
 # get array of left detector polynomials
 function polynomialsl(yvalues)
 	println("fitting polynomials (left)")
-	polys = [polyfit(fitpointsl, yvalues[:, i]) for i in 1:length(yvalues[1, : ])]
+	polys = [polyfit(fitpointsl, yvalues[:, i], order) for i in 1:length(yvalues[1, : ])]
 	return polys
 end
 
@@ -111,7 +118,7 @@ end
 # get array of right detector polynomials
 function polynomialsr(yvalues)
 	println("fitting polynomials (right)")
-	polys = [polyfit(fitpointsr, yvalues[:, i]) for i in 1:length(yvalues[1, : ])]
+	polys = [polyfit(fitpointsr, yvalues[:, i], order) for i in 1:length(yvalues[1, : ])]
 	return polys
 end
 
@@ -126,6 +133,7 @@ end
 # code below here
 const fitpointsl = get_baseline_points_l()
 const fitpointsr = get_baseline_points_r()
+const order = get_polynomial_order()
 
 const arrin = droptimes()
 const subs = vcat(genbasesubsl(arrin, polynomialsl(ysforpolyfitl(arrin))), genbasesubsr(arrin, polynomialsr(ysforpolyfitr(arrin))))
