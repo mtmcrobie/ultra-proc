@@ -5,7 +5,7 @@ module Tmp
     # add exported definitions below
     export get_file
     export xydata
-    export expdec1
+    #export expdec1
 
     # get file for kinetic analysis
     function get_file()

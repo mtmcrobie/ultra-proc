@@ -58,7 +58,7 @@ function ysforpolyfitl(arrin)
 
 	println("generate y-values for polynomial fit (left)")
 	ys = [spectral[k, 1] for k in yindiciesl]
-	for i in 2:length(spectral[1, : ])
+	for i in 2:length(spectral[1, :])
 		temp =  [spectral[j, i] for j in yindiciesl]
 		ys = hcat(ys, temp)
 	end
@@ -74,7 +74,7 @@ function ysforpolyfitr(arrin)
 
 	println("generate y-values for polynomial fit (right)")
 	ys = [spectrar[k, 1] for k in yindiciesr]
-	for i in 2:length(spectrar[1, : ])
+	for i in 2:length(spectrar[1, :])
 		temp =  [spectrar[j, i] for j in yindiciesr]
 		ys = hcat(ys, temp)
 	end
@@ -110,7 +110,7 @@ end
 # get array of left detector polynomials
 function polynomialsl(yvalues)
 	println("fitting polynomials (left)")
-	polys = [polyfit(fitpointsl, yvalues[:, i], order) for i in 1:length(yvalues[1, : ])]
+	polys = [polyfit(fitpointsl, yvalues[:, i], order) for i in 1:length(yvalues[1, :])]
 	return polys
 end
 
@@ -118,7 +118,7 @@ end
 # get array of right detector polynomials
 function polynomialsr(yvalues)
 	println("fitting polynomials (right)")
-	polys = [polyfit(fitpointsr, yvalues[:, i], order) for i in 1:length(yvalues[1, : ])]
+	polys = [polyfit(fitpointsr, yvalues[:, i], order) for i in 1:length(yvalues[1, :])]
 	return polys
 end
 
