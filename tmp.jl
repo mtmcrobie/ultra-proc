@@ -6,7 +6,8 @@ module Tmp
     export get_file
     export xydata
     export expdec1
-    export exp_parameters
+    export export_parameters
+    export export_residuals
 
     # get file for kinetic analysis
     function get_file()
@@ -28,7 +29,7 @@ module Tmp
         last =  findfirst(isequal(delays[2]), input_file[1, :])
         xdata, ydata = input_file[1, first:last], input_file[pixel_index, first:last]
 
-        return xdata, ydata
+        return xdata, ydata, pixel
     end
 
 
@@ -43,7 +44,7 @@ module Tmp
 
 
     # export fit parameters and confidence limits
-    function exp_parameters(fit)
+    function export_parameters(fit, pixel)
         ci = confidence_interval(fit)
 
         parameter_array = ["Parameter" "Value"      "Upper Bound" "Lower Bound";
@@ -52,11 +53,15 @@ module Tmp
                            "t"         coef(fit)[3] ci[3][1]      ci[3][2]     ;
         ]
 
-        writedlm("parameters.csv", parameter_array, ',')
+        writedlm("parameters$(pixel).csv", parameter_array, ',')
     end
 
 
-    # 
+    # export residuals
+    function export_residuals(fit, pixel)
+        writedlm("residuals$(pixel).csv", fit.resid, ',')
+    end
+        
 
 
 

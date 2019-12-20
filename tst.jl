@@ -7,12 +7,13 @@ module Tst
     #println(size(get_file()))
 
     #
-    xdata, ydata = xydata(get_file())
+    xdata, ydata, pixel = xydata(get_file())
     #=println(a); println(b)
     =#
     
     fit = expdec1(xdata, ydata)
     #println(Tmp.coef(fit))
-    exp_parameters(fit)
+    #export_parameters(fit, pixel)
+    export_residuals(fit, pixel)
 
 end
