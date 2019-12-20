@@ -6,10 +6,13 @@ module Tst
 
     #println(size(get_file()))
 
-    #=
-    a, b = xydata(get_file())
-    println(a); println(b)
+    #
+    xdata, ydata = xydata(get_file())
+    #=println(a); println(b)
     =#
     
+    fit = expdec1(xdata, ydata)
+    #println(Tmp.coef(fit))
+    exp_parameters(fit)
 
 end
