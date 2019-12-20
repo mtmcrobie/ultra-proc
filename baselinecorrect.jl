@@ -136,7 +136,8 @@ const fitpointsr = get_baseline_points_r()
 const order = get_polynomial_order()
 
 const arrin = droptimes()
-const subs = vcat(genbasesubsl(arrin, polynomialsl(ysforpolyfitl(arrin))), genbasesubsr(arrin, polynomialsr(ysforpolyfitr(arrin))))
+const subs = vcat(genbasesubsl(arrin, polynomialsl(ysforpolyfitl(arrin))),
+ 				  genbasesubsr(arrin, polynomialsr(ysforpolyfitr(arrin))))
 const corrected = subtractbase(arrin, subs)
 
 const outarr = stitch(corrected)

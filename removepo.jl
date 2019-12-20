@@ -28,7 +28,8 @@ function get_overlap_pixels(wavenumbers_added)
     println("Enter the last pixel on left detector and first pixel on right detector, separated by a space: ")
     pixelsin = split(readline())
     lpix, rpix = parse(Int, pixelsin[1]), parse(Int, pixelsin[2])
-    lindex, rindex = findfirst(isequal(lpix), wavenumbers_added[:, 1]), findfirst(isequal(rpix), wavenumbers_added[:, 1])
+    lindex = findfirst(isequal(lpix), wavenumbers_added[:, 1])
+    rindex = findfirst(isequal(rpix), wavenumbers_added[:, 1])
     return lindex, rindex
 end
     
@@ -40,7 +41,9 @@ function remove_overlap(wavenumbers_added, lindex, rindex)
     writedlm("pixel_overlap_removed.csv", po_removed, ',')
     println("Plotting...")
     gr()
-    porplot = plot(po_removed[2:end, 2], po_removed[2:end, findfirst(isequal(5), po_removed[1, :])], label = "5 ns")
+    porplot = plot(po_removed[2:end, 2],
+                   po_removed[2:end, findfirst(isequal(5), po_removed[1, :])],
+                   label = "5 ns")
     png(porplot, "porplot")
 end
 
