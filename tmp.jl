@@ -1,6 +1,7 @@
 module Tmp
     # using these
     using DelimitedFiles, Plots, LsqFit
+    plotlyjs()
 
     # add exported definitions below
     export get_file
@@ -8,6 +9,7 @@ module Tmp
     export expdec1
     export export_parameters
     export export_residuals
+    export single_kinetic
 
     # get file for kinetic analysis
     function get_file()
@@ -22,6 +24,7 @@ module Tmp
         println("Input pixel for kinetic analysis:")
         pixel = parse(Int, readline())
         pixel_index = findfirst(isequal(pixel), input_file[:, 1])
+        wavenumber = findfirst( x -> x == pixel, input_file[2, :])
 
         println("Input first and last delay in ns, separated by a space:")
         delays = parse.(Float64, split(readline(), " "))
@@ -29,7 +32,7 @@ module Tmp
         last =  findfirst(isequal(delays[2]), input_file[1, :])
         xdata, ydata = input_file[1, first:last], input_file[pixel_index, first:last]
 
-        return xdata, ydata, pixel
+        return xdata, ydata, pixel, wavenumber
     end
 
 
@@ -39,7 +42,8 @@ module Tmp
         p0 = [0.5, 0.5, 0.5]
 
         fit = curve_fit(model, xdata, ydata, p0)
-        return fit
+        model_ys = model(xdata, coef(fit))
+        return fit, model_ys
     end
 
 
@@ -58,12 +62,38 @@ module Tmp
 
 
     # export residuals
-    function export_residuals(fit, pixel)
+    function export_residuals(fit, xdata, pixel)
         writedlm("residuals$(pixel).csv", fit.resid, ',')
-    end
+        residual_plot = scatter(xdata, fit.resid,
+
+                    legend = :none,
+                    color = :red,
+                    xlabel = "Delay / ns",
+                    ylabel = "Regular residual",
+                    tick_dir = :out, grid = false,
+                    markerstrokecolor = :red
+                    )
         
+        residual_plot = hline!(xdata, [0], color = :black)
+        png(residual_plot, "residuals$(pixel)")
+    end
 
+    #= export plots
+    function single_kinetic(xdata, ydata, model_ys, wavenumber)
+        x_series = hcat(xdata, xdata)
+        y_series = hcat(ydata, model_ys)
+        labels = ["$wavenumber cm\u207b\u00b9", "Exponential fit"]
+        types = [:scatter, :line]
+        colors = [:black, :black]
 
+        single_kinetic_plot = plot(x_series, y_series,
 
+                    label = labels, seriestype = types, color = colors,
+                    xlabel = "Delay / ns", ylabel = "\u0394 Abs / OD",
+                    tick_dir = :out, grid = false
+                   )
+
+        png(single_kinetic_plot, "$(wavenumber)kinetics")
+    end=#
 
 end
