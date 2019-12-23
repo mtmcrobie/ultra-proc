@@ -7,6 +7,7 @@ module Tmp
     export get_file
     export xydata
     export expdec1
+    export expdec2
     export export_parameters
     export export_residuals
     export single_kinetic
@@ -43,6 +44,25 @@ module Tmp
 
         fit = curve_fit(model, xdata, ydata, p0)
         model_ys = model(xdata, coef(fit))
+        return fit, model_ys
+    end
+
+    function expdec2(xdata, ydata, pixel)
+        @. model(x, p) = p[1] + (p[2] * exp(-x / p[3])) + (p[4] * exp(-x / p[5]))
+        p0 = [0.5 for i in 1:5]
+        
+        fit = curve_fit(model, xdata, ydata, p0)
+        model_ys = model(xdata, coef(fit))
+        ci = confidence_interval(fit)
+        
+        parameter_array = ["Parameter" "Value"      "Upper Bound" "Lower Bound";
+                           "y0"        coef(fit)[1] ci[1][1]      ci[1][2]     ;
+                           "A1"        coef(fit)[2] ci[2][1]      ci[2][2]     ;
+                           "t1"        coef(fit)[3] ci[3][1]      ci[3][2]     ;
+                           "A2"        coef(fit)[4] ci[4][1]      ci[4][2]     ;
+                           "t2"        coef(fit)[5] ci[5][1]      ci[5][2]     ;
+                           ]
+        writedlm("parameters$(pixel).csv", parameter_array, ',')
         return fit, model_ys
     end
 
