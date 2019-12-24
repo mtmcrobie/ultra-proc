@@ -11,7 +11,7 @@ module Tst
     #println(size(ydata))
     
     #fit, model_ys = expdec1(xdata, ydata)
-    fit, model_ys = expdec2(xdata, ydata, pixel)
+    fit, model_ys = expdec2(xdata, ydata, pixel, wavenumber)
     #println(size(model_ys))
     #println(Tmp.coef(fit))
     #export_parameters(fit, pixel)

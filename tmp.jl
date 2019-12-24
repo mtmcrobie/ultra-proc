@@ -1,6 +1,6 @@
 module Tmp
     # using these
-    using DelimitedFiles, Plots, LsqFit
+    using DelimitedFiles, Plots, LsqFit, Debugger
     plotlyjs()
 
     # add exported definitions below
@@ -25,7 +25,7 @@ module Tmp
         println("Input pixel for kinetic analysis:")
         pixel = parse(Int, readline())
         pixel_index = findfirst(isequal(pixel), input_file[:, 1])
-        wavenumber = findfirst( x -> x == pixel, input_file[2, :])
+        wavenumber = convert(Int, round(input_file[pixel_index, 2]))
 
         println("Input first and last delay in ns, separated by a space:")
         delays = parse.(Float64, split(readline(), " "))
@@ -47,7 +47,7 @@ module Tmp
         return fit, model_ys
     end
 
-    function expdec2(xdata, ydata, pixel)
+    function expdec2(xdata, ydata, pixel, wavenumber)
         @. model(x, p) = p[1] + (p[2] * exp(-x / p[3])) + (p[4] * exp(-x / p[5]))
         p0 = [0.5 for i in 1:5]
         
@@ -63,6 +63,19 @@ module Tmp
                            "t2"        coef(fit)[5] ci[5][1]      ci[5][2]     ;
                            ]
         writedlm("parameters$(pixel).csv", parameter_array, ',')
+
+        single_kinetic_plot = scatter(xdata, ydata,
+                                   label = "$(wavenumber) cm\u207b\u00b9",
+                                   color = :black,
+                                   xlabel = "Delay / ns",
+                                   ylabel = "\u0394 Abs / OD",
+                                   tick_dir = :out,
+                                   grid = false
+                                   )
+
+        plot!(xdata, model_ys, label = "Exponential fit", color = :black, )
+
+        png(single_kinetic_plot, "kinetics$(wavenumber)")
         return fit, model_ys
     end
 
