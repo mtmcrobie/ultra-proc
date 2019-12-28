@@ -19,6 +19,20 @@ module Tmp
         return input_file
     end
 
+    function single_kinetic_plot(xdata, ydata, model_ys, wavenumber)
+        plot_out = scatter(xdata, ydata,
+                           label = "$(wavenumber) cm\u207b\u00b9",
+                           color = :black,
+                           xlabel = "Delay / ns",
+                           ylabel = "\u0394 Abs / OD",
+                           tick_dir = :out,
+                           grid = false
+                                      )
+
+        plot!(xdata, model_ys, label = "Exponential fit", color = :black)
+        return single_kinetic_plot
+    end
+
 
     # get x and y data for fitting
     function xydata(input_file)
@@ -38,12 +52,23 @@ module Tmp
 
 
     # perform expdec1 (3 parameter exponential model) fit
-    function expdec1(xdata, ydata)
+    function expdec1(xdata, ydata, wavenumber)
         @. model(x, p) = p[1] + (p[2] * exp(-x / p[3]))
         p0 = [0.5, 0.5, 0.5]
 
         fit = curve_fit(model, xdata, ydata, p0)
         model_ys = model(xdata, coef(fit))
+
+        single_kinetic_plot(xdata, ydata, model_ys, wavenumber)
+
+        ci = confidence_interval(fit)
+        parameter_array = ["Parameter" "Value"      "Upper Bound" "Lower Bound";
+                           "y0"        coef(fit)[1] ci[1][1]      ci[1][2]     ;
+                           "A"         coef(fit)[2] ci[2][1]      ci[2][2]     ;
+                           "t"         coef(fit)[3] ci[3][1]      ci[3][2]     ;
+        ]
+
+        writedlm("parameters$(wavenumber).csv", parameter_array, ',')
         return fit, model_ys
     end
 
@@ -73,7 +98,7 @@ module Tmp
                                    grid = false
                                    )
 
-        plot!(xdata, model_ys, label = "Exponential fit", color = :black, )
+        plot!(xdata, model_ys, label = "Exponential fit", color = :black)
 
         png(single_kinetic_plot, "kinetics$(wavenumber)")
         return fit, model_ys

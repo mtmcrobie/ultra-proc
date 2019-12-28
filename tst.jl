@@ -10,8 +10,8 @@ module Tst
     xdata, ydata, pixel, wavenumber = xydata(get_file())
     #println(size(ydata))
     
-    #fit, model_ys = expdec1(xdata, ydata)
-    fit, model_ys = expdec2(xdata, ydata, pixel, wavenumber)
+    fit, model_ys = expdec1(xdata, ydata, wavenumber)
+    #fit, model_ys = expdec2(xdata, ydata, pixel, wavenumber)
     #println(size(model_ys))
     #println(Tmp.coef(fit))
     #export_parameters(fit, pixel)
