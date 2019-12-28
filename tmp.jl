@@ -115,7 +115,7 @@ module Tmp
         single_kinetic_plot(xdata, ydata, model_ys, wavenumber)
         export_parameters3(fit, wavenumber)
 
-        return fit, model_ys
+        return fit
     end
 
 
@@ -130,8 +130,20 @@ module Tmp
 
         single_kinetic_plot(xdata, ydata, model_ys, wavenumber)
         export_parameters5(fit, wavenumber)
-        return fit, model_ys
+        return fit
     end
 
+
+    function expgro1(xdata, ydata, wavenumber)
+        @. model(x, p) = p[1] + (p[2] * exp(x / p[3]))
+        p0 = [0.5, 0.5, 0.5]
+
+        fit = curve_fit(model, xdata, ydata, p0)
+        model_ys = model(xdata, coef(fit))
+
+        single_kinetic_plot(xdata, ydata, model_ys, wavenumber)
+        export_parameter3(fit, wavenumber)
+        return fit
+    end
 
 end
