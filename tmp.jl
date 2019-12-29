@@ -1,13 +1,12 @@
 module Tmp
     # using these
-    using DelimitedFiles, Plots, LsqFit
+    using DelimitedFiles, Plots, LsqFit, Statistics
     plotlyjs()
 
     # add exported definitions below
     export get_file
     export xydata
-    export expdec1
-    export expdec2
+    export expdec1, expdec2, expgro1, expgro2
     export export_parameters3
     export export_parameters5
     export export_residuals
@@ -60,10 +59,11 @@ module Tmp
     function export_parameters3(fit, wavenumber)
         ci = confidence_interval(fit)
 
-        parameter_array = ["Parameter" "Value"      "Upper Bound" "Lower Bound";
-                           "y0"        coef(fit)[1] ci[1][1]      ci[1][2]     ;
-                           "A"         coef(fit)[2] ci[2][1]      ci[2][2]     ;
-                           "t"         coef(fit)[3] ci[3][1]      ci[3][2]     ;
+        parameter_array = ["Parameter" "Value"          "Lower Bound" "Upper Bound";
+                           "y0"        coef(fit)[1]     ci[1][1]      ci[1][2]     ;
+                           "A"         coef(fit)[2]     ci[2][1]      ci[2][2]     ;
+                           "t"         coef(fit)[3]     ci[3][1]      ci[3][2]     ;
+                           "k"         1/(coef(fit)[3]) 1/(ci[3][2])  1/(ci[3][1]) ;
                            ]
 
         writedlm("parameters$(wavenumber).csv", parameter_array, ',')
@@ -74,12 +74,14 @@ module Tmp
     function export_parameters5(fit, wavenumber)
         ci = confidence_interval(fit)
 
-        parameter_array = ["Parameter" "Value"      "Upper Bound" "Lower Bound" ;
-                           "y0"         coef(fit)[1] ci[1][1]      ci[1][2]     ;
-                           "A1"         coef(fit)[2] ci[2][1]      ci[2][2]     ;
-                           "t1"         coef(fit)[3] ci[3][1]      ci[3][2]     ;
-                           "A2"         coef(fit)[2] ci[2][1]      ci[2][2]     ;
-                           "t2"         coef(fit)[3] ci[3][1]      ci[3][2]     ;
+        parameter_array = ["Parameter" "Value"          "Lower Bound" "Upper Bound" ;
+                           "y0"         coef(fit)[1]     ci[1][1]      ci[1][2]     ;
+                           "A1"         coef(fit)[2]     ci[2][1]      ci[2][2]     ;
+                           "t1"         coef(fit)[3]     ci[3][1]      ci[3][2]     ;
+                           "k1"         1/(coef(fit)[3]) 1/(ci[3][2])  1/(ci[3][1]) ;
+                           "A2"         coef(fit)[4]     ci[4][1]      ci[4][2]     ;
+                           "t2"         coef(fit)[5]     ci[5][1]      ci[5][2]     ;
+                           "k2"         1/(coef(fit)[5]) 1/(ci[5][2])  1/(ci[5][1]) ;
                            ]
 
         writedlm("parameters$(wavenumber).csv", parameter_array, ',')
@@ -107,14 +109,14 @@ module Tmp
     # perform expdec1 (3 parameter exponential model) fit
     function expdec1(xdata, ydata, wavenumber)
         @. model(x, p) = p[1] + (p[2] * exp(-x / p[3]))
-        p0 = [0.5, 0.5, 0.5]
+        p0 = [ydata[end], mean(ydata), 100]
 
-        fit = curve_fit(model, xdata, ydata, p0)
+        fit = curve_fit(model, xdata, ydata, p0; maxIter = 400)
         model_ys = model(xdata, coef(fit))
 
         single_kinetic_plot(xdata, ydata, model_ys, wavenumber)
         export_parameters3(fit, wavenumber)
-
+        export_residuals(fit, xdata, wavenumber)
         return fit
     end
 
@@ -123,26 +125,14 @@ module Tmp
     # perform expdec2 (5 parameter exponential model) fit
     function expdec2(xdata, ydata, wavenumber)
         @. model(x, p) = p[1] + (p[2] * exp(-x / p[3])) + (p[4] * exp(-x / p[5]))
-        p0 = [0.5 for i in 1:5]
+        p0 = [ydata[end], mean(ydata), 100, mean(ydata), 100]
 
-        fit = curve_fit(model, xdata, ydata, p0)
+        fit = curve_fit(model, xdata, ydata, p0; maxIter = 400)
         model_ys = model(xdata, coef(fit))
 
         single_kinetic_plot(xdata, ydata, model_ys, wavenumber)
         export_parameters5(fit, wavenumber)
-        return fit
-    end
-
-
-    function expgro1(xdata, ydata, wavenumber)
-        @. model(x, p) = p[1] + (p[2] * exp(x / p[3]))
-        p0 = [0.5, 0.5, 0.5]
-
-        fit = curve_fit(model, xdata, ydata, p0)
-        model_ys = model(xdata, coef(fit))
-
-        single_kinetic_plot(xdata, ydata, model_ys, wavenumber)
-        export_parameter3(fit, wavenumber)
+        export_residuals(fit, xdata, wavenumber)
         return fit
     end
 
