@@ -1,0 +1,23 @@
+Functions
+    expgrodec?
+        parameters
+        graph
+    convert all t (s) and k (s^-1)
+
+Do something about Abs scales on plots.
+Look into organising code and data into structures.
+
+Organise code into top-level folder
+    output in separate folder
+        sub-folders for different peaks?
+
+Command-line UI
+    All "get file" functions can be one function in the main module.
+
+
+Spectra module?
+
+Luxury
+    Automatic baseline correction
+    Assisted calibration
+    Voigt Profiles
