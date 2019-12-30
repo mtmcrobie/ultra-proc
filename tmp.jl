@@ -48,7 +48,7 @@ module Tmp
                            ylabel = "\u0394 Abs / OD",
                            tick_dir = :out,
                            grid = false
-                           )
+                          )
 
         plot!(xdata, model_ys, label = "Exponential fit", color = :black)
         png(plot_out, "$(wavenumber)kinetics")
@@ -64,7 +64,7 @@ module Tmp
                            "A"         coef(fit)[2]     ci[2][1]      ci[2][2]     ;
                            "t"         coef(fit)[3]     ci[3][1]      ci[3][2]     ;
                            "k"         1/(coef(fit)[3]) 1/(ci[3][2])  1/(ci[3][1]) ;
-                           ]
+                          ]
 
         writedlm("parameters$(wavenumber).csv", parameter_array, ',')
     end
@@ -82,7 +82,7 @@ module Tmp
                            "A2"         coef(fit)[4]     ci[4][1]      ci[4][2]     ;
                            "t2"         coef(fit)[5]     ci[5][1]      ci[5][2]     ;
                            "k2"         1/(coef(fit)[5]) 1/(ci[5][2])  1/(ci[5][1]) ;
-                           ]
+                          ]
 
         writedlm("parameters$(wavenumber).csv", parameter_array, ',')
     end
@@ -93,13 +93,13 @@ module Tmp
         writedlm("residuals$(wavenumber).csv", fit.resid, ',')
 
         residual_plot = scatter(xdata, fit.resid,
-                    legend = :none,
-                    color = :red,
-                    xlabel = "Delay / ns",
-                    ylabel = "Regular residual",
-                    tick_dir = :out, grid = false,
-                    markerstrokecolor = :red
-                    )
+                                legend = :none,
+                                color = :red,
+                                xlabel = "Delay / ns",
+                                ylabel = "Regular residual",
+                                tick_dir = :out, grid = false,
+                                markerstrokecolor = :red
+                               )
 
         residual_plot = hline!(xdata, [0], color = :black)
         png(residual_plot, "residuals$(wavenumber)")
