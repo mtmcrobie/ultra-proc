@@ -1,6 +1,7 @@
+#!/usr/bin/env Julia
 module Tst
-    include("tmp.jl")
-    using .Tmp
+    include("Kinetics.jl")
+    using Kinetics
 
     # add test code below
 
