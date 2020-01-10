@@ -2,7 +2,7 @@
 module Kinetics
     # using these
     using DelimitedFiles, Plots, LsqFit, Statistics
-    plotlyjs()
+    gr()
 
     # add exported definitions below
     export get_file

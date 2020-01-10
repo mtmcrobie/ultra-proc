@@ -144,4 +144,3 @@ const outarr = stitch(corrected)
 
 writedlm("baseline_corrected.csv", outarr, ',')
 println("complete")
-exit()

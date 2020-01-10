@@ -11,8 +11,8 @@ function sortraw(file::String)
     pixels = @view inarr[:, 1]
 
     sorted = sortslices(nopixels, dims = 2)
-    writedlm("all_procesd_spectra_sorted.csv", sorted, ',')
     outarr = [pixels sorted]
+    writedlm("all_procesd_spectra_sorted.csv", outarr, ',')
     return outarr
 end
 

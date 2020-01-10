@@ -18,7 +18,7 @@ import SortOrg
 println("Welcome to ULTRAproc! Enter [Q] at any prompt to [Q]uit.")
 
 while true
-    new = yninput("Do you want to process a fresh dataset? [Y/N]")
+    new = yninput("Do you want to process a fresh dataset?")
 
     if new == true
         new_file_present = findfirst(x -> x == "Run 0 Avg Diff spec 01.csv", readdir())
@@ -36,20 +36,43 @@ while true
         end
 
         sorted = sortraw("Run 0 Avg Diff spec 01.csv")
-        
-        @label baseline_correction
-        include("BaselineCorrect.jl")
 
-        @label remove_po
-        include("RemovePO.jl")
+        confirm_baseline = yninput("Start baseline correction?")
+        if confirm_baseline == false
+            continue
+        else
+            @label baseline_correction
+            include("BaselineCorrect.jl")
+        end
 
-        @label kinetics
-        include("Kinetics.jl")
+        confirm_removepo = yninput("Remove pixel overlap?")
+        if confirm_removepo == false
+            continue
+        else
+            @label remove_po
+            include("RemovePO.jl")
+        end
+
+        confirm_kinetics = yninput("Start kinetic analysis?")
+        if confirm_kinetics == false
+            continue
+        else
+            @label kinetics
+            include("Kinetics.jl")
+        end
 
 
     elseif new == false
-        userinput("[B]aseline correction, [R]emove pixel overlap, or [K]inetic analysis?")
+        skip = userinput("[B]aseline correction, [R]emove pixel overlap, or [K]inetics?")
         #code
+        if skip == "b" || skip == "B"
+            @goto baseline_correction
+        elseif skip == "r" || skip == "R"
+            @goto remove_po
+        elseif skip == "k" || skip == "K"
+            @goto kinetics
+        end
+        
     end
 end
 

@@ -43,7 +43,8 @@ function remove_overlap(wavenumbers_added, lindex, rindex)
     gr()
     porplot = plot(po_removed[2:end, 2],
                    po_removed[2:end, findfirst(isequal(5), po_removed[1, :])],
-                   label = "5 ns")
+                   label = "5 ns",
+                   grid = false)
     png(porplot, "porplot")
 end
 
@@ -53,5 +54,3 @@ original_file, conversion_file = get_files()
 wavenumbers_added = add_wavenumbers(original_file, conversion_file)
 lindex, rindex = get_overlap_pixels(wavenumbers_added)
 remove_overlap(wavenumbers_added, lindex, rindex)
-
-exit()
