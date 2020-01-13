@@ -12,7 +12,7 @@ function sortraw(file::String)
 
     sorted = sortslices(nopixels, dims = 2)
     outarr = [pixels sorted]
-    writedlm("all_procesd_spectra_sorted.csv", outarr, ',')
+    writedlm("all_procesd_spectra_.csv", outarr, ',')
     return outarr
 end
 

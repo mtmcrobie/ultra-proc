@@ -56,11 +56,26 @@ while true
         confirm_kinetics = yninput("Start kinetic analysis?")
         if confirm_kinetics == false
             continue
-        else
+        elseif confirm_kinetics == true
             @label kinetics
+            println("Loading Kinetics.jl...")
             include("Kinetics.jl")
-        end
+            import .Kinetics
 
+            input_file = Kinetics.get_file()
+            while true
+                xdata, ydata, wavenumber = Kinetics.xydata(input_file)
+                Kinetics.expdec1(xdata, ydata, wavenumber)
+
+                again = yninput("Perform another kinetic analysis?")
+
+                if again == true
+                    continue
+                elseif again == false
+                    break
+                end
+            end
+        end
 
     elseif new == false
         skip = userinput("[B]aseline correction, [R]emove pixel overlap, or [K]inetics?")
@@ -72,7 +87,7 @@ while true
         elseif skip == "k" || skip == "K"
             @goto kinetics
         end
-        
+
     end
 end
 

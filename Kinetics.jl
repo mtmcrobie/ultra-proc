@@ -11,7 +11,7 @@ module Kinetics
     export export_parameters3
     export export_parameters5
     export export_residuals
-    export single_kinetic
+    export single_kinetic_plot
 
 
     # get file for kinetic analysis
@@ -136,5 +136,6 @@ module Kinetics
         export_residuals(fit, xdata, wavenumber)
         return fit
     end
+
 
 end

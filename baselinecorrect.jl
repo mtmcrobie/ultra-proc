@@ -44,8 +44,8 @@ function stitch(corrected)
 	println("compiling output")
 	original = readdlm("all_procesd_spectra_.csv", ',')
 	shortdelays = @view original[2:end, 1:41]
-	delays = @view original[1, :]
-	arrout = vcat(transpose(delays), hcat(shortdelays, corrected))
+        delays = @view original[1, :]
+	arrout = vcat(permutedims(delays), hcat(shortdelays, corrected))
 	return arrout
 end
 
